@@ -41,6 +41,8 @@ export const createBlog = async (req, res) => {
 };
 
 
+
+
 // GET ALL PUBLISHED BLOGS
 
 export const getAllBlogs = async (req, res) => {
@@ -61,6 +63,8 @@ export const getAllBlogs = async (req, res) => {
     });
   }
 };
+
+
 
 // GET A SPECIFIC BLOG
 
@@ -83,6 +87,55 @@ export const getBlogById = async (req, res) => {
     res.status(200).json({
       success: true,
       blog
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+export const updateBlog = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const blog = await Blog.findById(id);
+
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found"
+      });
+    }
+
+    const {
+      title,
+      subtitle,
+      description,
+      category,
+      status
+    } = req.body;
+
+    // Update text fields
+    blog.title = title ?? blog.title;
+    blog.subtitle = subtitle ?? blog.subtitle;
+    blog.description = description ?? blog.description;
+    blog.category = category ?? blog.category;
+    blog.status = status ?? blog.status;
+
+    // Update image only if a new image is uploaded
+    if (req.file) {
+      blog.image = `/uploads/blogs/${req.file.filename}`;
+    }
+
+    const updatedBlog = await blog.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Blog updated successfully",
+      blog: updatedBlog
     });
 
   } catch (error) {
