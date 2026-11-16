@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import protect from "./middleware/authMiddleware.js";
 import blogRoutes from "./routes/blogRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 dotenv.config();
 
@@ -41,6 +42,8 @@ app.get("/api/test-protected", protect, (req, res) => {
 app.use("/uploads", express.static("uploads"));
 
 app.use("/api/blogs", blogRoutes);
+
+app.use("/api/dashboard", dashboardRoutes);
 
 const PORT = process.env.PORT || 5000;
 
